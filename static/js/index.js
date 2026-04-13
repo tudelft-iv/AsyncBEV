@@ -19,6 +19,66 @@ function setInterpolationImage(i) {
   $('#interpolation-image-wrapper').empty().append(image);
 }
 
+function setupSynchronizedVideos() {
+  var videos = Array.from(document.querySelectorAll('video[data-sync-group]'));
+  if (videos.length < 2) {
+    return;
+  }
+
+  var syncing = false;
+
+  function inSameGroup(source, target) {
+    return source.dataset.syncGroup && source.dataset.syncGroup === target.dataset.syncGroup;
+  }
+
+  function syncOthers(source, action) {
+    if (syncing) {
+      return;
+    }
+    syncing = true;
+    videos.forEach(function(target) {
+      if (target === source || !inSameGroup(source, target)) {
+        return;
+      }
+
+      action(target);
+    });
+    syncing = false;
+  }
+
+  videos.forEach(function(video) {
+    video.addEventListener('play', function() {
+      var sourceTime = video.currentTime;
+      var sourceRate = video.playbackRate;
+      syncOthers(video, function(target) {
+        target.currentTime = sourceTime;
+        target.playbackRate = sourceRate;
+        target.play();
+      });
+    });
+
+    video.addEventListener('pause', function() {
+      syncOthers(video, function(target) {
+        target.pause();
+      });
+    });
+
+    video.addEventListener('seeking', function() {
+      var sourceTime = video.currentTime;
+      syncOthers(video, function(target) {
+        target.currentTime = sourceTime;
+      });
+    });
+
+    video.addEventListener('ratechange', function() {
+      var sourceRate = video.playbackRate;
+      syncOthers(video, function(target) {
+        target.playbackRate = sourceRate;
+      });
+    });
+  });
+}
+
 
 $(document).ready(function() {
     // Check for click events on the navbar burger icon
@@ -72,6 +132,8 @@ $(document).ready(function() {
     });
     setInterpolationImage(0);
     $('#interpolation-slider').prop('max', NUM_INTERP_FRAMES - 1);
+
+    setupSynchronizedVideos();
 
     bulmaSlider.attach();
 
