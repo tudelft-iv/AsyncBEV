@@ -25,55 +25,193 @@ function setupSynchronizedVideos() {
     return;
   }
 
-  var syncing = false;
-
-  function inSameGroup(source, target) {
-    return source.dataset.syncGroup && source.dataset.syncGroup === target.dataset.syncGroup;
-  }
-
-  function syncOthers(source, action) {
-    if (syncing) {
-      return;
-    }
-    syncing = true;
-    videos.forEach(function(target) {
-      if (target === source || !inSameGroup(source, target)) {
-        return;
-      }
-
-      action(target);
-    });
-    syncing = false;
-  }
+  var PROGRAMMATIC_EVENT_WINDOW_MS = 300;
+  var DRIFT_TOLERANCE_SECONDS = 0.12;
+  var groups = {};
 
   videos.forEach(function(video) {
-    video.addEventListener('play', function() {
-      var sourceTime = video.currentTime;
-      var sourceRate = video.playbackRate;
-      syncOthers(video, function(target) {
-        target.currentTime = sourceTime;
-        target.playbackRate = sourceRate;
-        target.play();
+    var groupName = video.dataset.syncGroup;
+    if (!groupName) {
+      return;
+    }
+
+    if (!groups[groupName]) {
+      groups[groupName] = {
+        videos: [],
+        syncing: false,
+        leader: null,
+        rafId: null
+      };
+    }
+
+    groups[groupName].videos.push(video);
+  });
+
+  function markProgrammatic(video) {
+    video.dataset.syncProgrammaticUntil = String(Date.now() + PROGRAMMATIC_EVENT_WINDOW_MS);
+  }
+
+  function isProgrammatic(video) {
+    var until = Number(video.dataset.syncProgrammaticUntil || 0);
+    return Date.now() < until;
+  }
+
+  function withGroupSync(group, action) {
+    if (group.syncing) {
+      return;
+    }
+
+    group.syncing = true;
+    try {
+      action();
+    } finally {
+      group.syncing = false;
+    }
+  }
+
+  function syncFollowerState(source, target, shouldPlay) {
+    markProgrammatic(target);
+    target.playbackRate = source.playbackRate;
+
+    if (Math.abs(target.currentTime - source.currentTime) > DRIFT_TOLERANCE_SECONDS) {
+      target.currentTime = source.currentTime;
+    }
+
+    if (shouldPlay) {
+      target.play().catch(function() {
+        // Ignore play rejections (for example, browser gesture policy).
+      });
+    }
+  }
+
+  function stepGroup(group) {
+    if (!group.leader || group.leader.paused || group.leader.ended) {
+      group.rafId = null;
+      return;
+    }
+
+    withGroupSync(group, function() {
+      group.videos.forEach(function(target) {
+        if (target === group.leader) {
+          return;
+        }
+
+        syncFollowerState(group.leader, target, !target.ended);
       });
     });
 
-    video.addEventListener('pause', function() {
-      syncOthers(video, function(target) {
-        target.pause();
-      });
+    group.rafId = window.requestAnimationFrame(function() {
+      stepGroup(group);
     });
+  }
 
-    video.addEventListener('seeking', function() {
-      var sourceTime = video.currentTime;
-      syncOthers(video, function(target) {
-        target.currentTime = sourceTime;
-      });
+  function ensurePlaybackLoop(group, leader) {
+    group.leader = leader;
+    if (group.rafId !== null) {
+      return;
+    }
+
+    group.rafId = window.requestAnimationFrame(function() {
+      stepGroup(group);
     });
+  }
 
-    video.addEventListener('ratechange', function() {
-      var sourceRate = video.playbackRate;
-      syncOthers(video, function(target) {
-        target.playbackRate = sourceRate;
+  function stopPlaybackLoop(group, leader) {
+    if (group.leader !== leader) {
+      return;
+    }
+
+    group.leader = null;
+    if (group.rafId !== null) {
+      window.cancelAnimationFrame(group.rafId);
+      group.rafId = null;
+    }
+  }
+
+  Object.keys(groups).forEach(function(groupName) {
+    var group = groups[groupName];
+    if (group.videos.length < 2) {
+      return;
+    }
+
+    group.videos.forEach(function(video) {
+      video.addEventListener('play', function() {
+        if (isProgrammatic(video)) {
+          return;
+        }
+
+        withGroupSync(group, function() {
+          group.videos.forEach(function(target) {
+            if (target === video) {
+              return;
+            }
+
+            syncFollowerState(video, target, true);
+          });
+        });
+
+        ensurePlaybackLoop(group, video);
+      });
+
+      video.addEventListener('pause', function() {
+        if (isProgrammatic(video)) {
+          return;
+        }
+
+        withGroupSync(group, function() {
+          group.videos.forEach(function(target) {
+            if (target === video) {
+              return;
+            }
+
+            markProgrammatic(target);
+            target.pause();
+          });
+        });
+
+        stopPlaybackLoop(group, video);
+      });
+
+      video.addEventListener('seeking', function() {
+        if (isProgrammatic(video)) {
+          return;
+        }
+
+        withGroupSync(group, function() {
+          group.videos.forEach(function(target) {
+            if (target === video) {
+              return;
+            }
+
+            markProgrammatic(target);
+            target.currentTime = video.currentTime;
+          });
+        });
+      });
+
+      video.addEventListener('ratechange', function() {
+        if (isProgrammatic(video)) {
+          return;
+        }
+
+        withGroupSync(group, function() {
+          group.videos.forEach(function(target) {
+            if (target === video) {
+              return;
+            }
+
+            markProgrammatic(target);
+            target.playbackRate = video.playbackRate;
+          });
+        });
+      });
+
+      video.addEventListener('ended', function() {
+        if (isProgrammatic(video)) {
+          return;
+        }
+
+        stopPlaybackLoop(group, video);
       });
     });
   });
