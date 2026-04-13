@@ -309,42 +309,59 @@
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Scene Comparison</h2>
-        <p class="subtitle is-6">Same scene, different models (scene-0003)</p>
+        <p class="subtitle is-6">Same scene, different models (<span id="scene-comparison-label">scene-0003</span>)</p>
+        <div class="field is-grouped is-grouped-centered">
+          <div class="control">
+            <div class="select is-small">
+              <select id="scene-selector">
+                <option value="scene-0003" selected>scene-0003</option>
+                <option value="scene-0016">scene-0016</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="columns is-variable is-4">
+
       <div class="column is-half">
         <div class="content has-text-centered">
-          <h3 class="title is-5">AsyncBEV</h3>
-          <video class="model-sync-video"
+          <h3 class="title is-5">CMT</h3>
+          <video id="cmt-scene-video"
+                 class="model-sync-video"
                  data-sync-group="scene-0003"
                  controls
                  muted
                  playsinline
                  preload="metadata"
                  width="100%">
-            <source src="./static/video/asyncbev_async_10/scene-0003/LIDAR_TOP_with_GT_vfr.mp4"
+            <source id="cmt-scene-source"
+                    src="./static/video/cmt_async_10/scene-003/LIDAR_TOP_with_GT_vfr.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+      
+      <div class="column is-half">
+        <div class="content has-text-centered">
+          <h3 class="title is-5">AsyncBEV</h3>
+          <video id="asyncbev-scene-video"
+                 class="model-sync-video"
+                 data-sync-group="scene-0003"
+                 controls
+                 muted
+                 playsinline
+                 preload="metadata"
+                 width="100%">
+            <source id="asyncbev-scene-source"
+                    src="./static/video/asyncbev_async_10/scene-0003/LIDAR_TOP_with_GT_vfr.mp4"
                     type="video/mp4">
           </video>
         </div>
       </div>
 
-      <div class="column is-half">
-        <div class="content has-text-centered">
-          <h3 class="title is-5">CMT</h3>
-          <video class="model-sync-video"
-                 data-sync-group="scene-0003"
-                 controls
-                 muted
-                 playsinline
-                 preload="metadata"
-                 width="100%">
-            <source src="./static/video/cmt_async_10/scene-003/LIDAR_TOP_with_GT_vfr.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-      </div>
+      
     </div>
   </div>
 </section>

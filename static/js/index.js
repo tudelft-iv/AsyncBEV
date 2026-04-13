@@ -217,6 +217,69 @@ function setupSynchronizedVideos() {
   });
 }
 
+function setupSceneComparisonSelector() {
+  var selector = document.getElementById('scene-selector');
+  var sceneLabel = document.getElementById('scene-comparison-label');
+  var asyncVideo = document.getElementById('asyncbev-scene-video');
+  var asyncSource = document.getElementById('asyncbev-scene-source');
+  var cmtVideo = document.getElementById('cmt-scene-video');
+  var cmtSource = document.getElementById('cmt-scene-source');
+
+  if (!selector || !sceneLabel || !asyncVideo || !asyncSource || !cmtVideo || !cmtSource) {
+    return;
+  }
+
+  var sceneMap = {
+    'scene-0003': {
+      asyncbev: 'scene-0003',
+      cmt: 'scene-003'
+    },
+    'scene-0016': {
+      asyncbev: 'scene-0016',
+      cmt: 'scene-0016'
+    }
+  };
+
+  function applyScene(sceneName) {
+    var sceneConfig = sceneMap[sceneName];
+    if (!sceneConfig) {
+      return;
+    }
+
+    var shouldResumePlayback = !asyncVideo.paused || !cmtVideo.paused;
+
+    asyncVideo.pause();
+    cmtVideo.pause();
+
+    asyncVideo.dataset.syncGroup = sceneName;
+    cmtVideo.dataset.syncGroup = sceneName;
+    sceneLabel.textContent = sceneName;
+
+    asyncSource.src = './static/video/asyncbev_async_10/' + sceneConfig.asyncbev + '/LIDAR_TOP_with_GT_vfr.mp4';
+    cmtSource.src = './static/video/cmt_async_10/' + sceneConfig.cmt + '/LIDAR_TOP_with_GT_vfr.mp4';
+
+    asyncVideo.load();
+    cmtVideo.load();
+
+    if (shouldResumePlayback) {
+      Promise.all([
+        asyncVideo.play().catch(function() {
+          return null;
+        }),
+        cmtVideo.play().catch(function() {
+          return null;
+        })
+      ]);
+    }
+  }
+
+  selector.addEventListener('change', function() {
+    applyScene(selector.value);
+  });
+
+  applyScene(selector.value);
+}
+
 
 $(document).ready(function() {
     // Check for click events on the navbar burger icon
@@ -271,6 +334,7 @@ $(document).ready(function() {
     setInterpolationImage(0);
     $('#interpolation-slider').prop('max', NUM_INTERP_FRAMES - 1);
 
+    setupSceneComparisonSelector();
     setupSynchronizedVideos();
 
     bulmaSlider.attach();
