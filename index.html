@@ -1,410 +1,165 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="description"
-        content="AsyncBEV: Cross-modal Flow Alignment in Asynchronous 3D Object Detection">
-  <meta name="keywords" content="AsyncBEV, Autonomous Driving, Asynchronous 3D Object Detection">
+  <meta name="description" content="AsyncBEV improves asynchronous camera–LiDAR 3D object detection with cross-modal flow alignment. ICLR 2026 paper, code, data, and scene comparisons.">
+  <meta name="keywords" content="AsyncBEV, autonomous driving, asynchronous 3D object detection, BEV, ICLR 2026">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AsyncBEV: Cross-modal Flow Alignment in Asynchronous 3D Object Detection</title>
-
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
-    gtag('js', new Date());
-
-    gtag('config', 'G-PYVRSFMDRL');
-  </script>
-
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
-
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <meta name="theme-color" content="#007fa6">
+  <title>AsyncBEV | Cross-Modal Flow Alignment · ICLR 2026</title>
   <link rel="stylesheet" href="./static/css/index.css">
   <link rel="icon" href="./static/images/tudelft-icon-192x192-150x150.png">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
+  <script defer src="./static/js/index.js"></script>
 </head>
 <body>
-
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="https://intelligent-vehicles.org/">
-      <span class="icon">
-          <i class="fas fa-home"></i>
-      </span>
-      </a>
-
-      <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link">
-          More Research
-        </a>
-        <div class="navbar-dropdown">
-          <a class="navbar-item" href="https://github.com/tudelft-iv/UniBEV">
-            UniBEV
-          </a>
-          <a class="navbar-item" href="https://github.com/tudelft-iv/VoteFlow">
-            VoteFlow
-          </a>
-        </div>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="site-nav container" aria-label="Main navigation">
+      <a class="nav-brand" href="#top">AsyncBEV<span> / ICLR 2026</span></a>
+      <div class="nav-links">
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#scenes">Scenes</a>
+        <a href="#resources">Resources</a>
       </div>
-    </div>
+    </nav>
+  </header>
 
-  </div>
-</nav>
+  <main id="main">
+    <section class="hero container" id="top" aria-labelledby="paper-title">
+      <p class="eyebrow">ICLR 2026</p>
+      <h1 id="paper-title"><span class="project-name">AsyncBEV</span><span class="paper-subtitle">Cross-Modal Flow Alignment in<br class="desktop-break"> Asynchronous 3D Object Detection</span></h1>
+      <p class="authors">
+        <a href="https://www.tudelft.nl/staff/s.wang.15/">Shiming Wang</a><span aria-hidden="true"> · </span>
+        <a href="https://sites.google.com/it-caesar.de/homepage/">Holger Caesar</a><span aria-hidden="true"> · </span>
+        <a href="https://3d.bk.tudelft.nl/liangliang/">Liangliang Nan</a><span aria-hidden="true"> · </span>
+        <a href="https://jkooij.github.io/">Julian F. P. Kooij</a>
+      </p>
+      <p class="affiliation">Delft University of Technology</p>
+      <div class="publication-links" aria-label="Publication resources">
+        <a class="button primary" href="https://proceedings.iclr.cc/paper_files/paper/2026/file/2b31e6fdd87368cb1e838219deb153d3-Paper-Conference.pdf">Paper <span aria-hidden="true">↗</span></a>
+        <a class="button" href="./static/images/AsyncBEV_ICLR26_poster_resize.png">Poster <span aria-hidden="true">↗</span></a>
+        <a class="button" href="https://github.com/tudelft-iv/AsyncBEV">Code <span aria-hidden="true">↗</span></a>
+        <a class="button" href="https://huggingface.co/datasets/ShimingWang/AsyncBEV">Dataset <span aria-hidden="true">↗</span></a>
+        <a class="button" href="https://proceedings.iclr.cc/paper_files/paper/2026/hash/2b31e6fdd87368cb1e838219deb153d3-Abstract-Conference.html">Proceedings <span aria-hidden="true">↗</span></a>
+        <a class="button" href="https://arxiv.org/abs/2601.12994">arXiv <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="hero-summary">Align asynchronous camera and LiDAR features.<br>Detect moving objects more reliably.</p>
+    </section>
 
+    <section class="container teaser-section" aria-label="Motivation">
+      <figure class="motivation-figure">
+        <img src="./static/images/motivation.png" width="4642" height="1732" alt="Three panels illustrate sensor asynchrony, misaligned CMT detections, and detections corrected by AsyncBEV.">
+        <figcaption><strong>When sensors observe the world at different times, moving objects become misaligned.</strong> (a) Asynchronous multi-modal 3D detection. (b) Pretrained CMT under sensor asynchrony. (c) AsyncBEV corrects spatial misalignment in the predicted boxes.</figcaption>
+      </figure>
+    </section>
 
-<section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">AsyncBEV: Cross-modal Flow Alignment in Asynchronous 3D Object Detection</h1>
-          <div class="is-size-5 publication-authors">
-            <span class="author-block">
-              <a href="https://www.tudelft.nl/staff/s.wang.15/">Shiming Wang</a><sup>1,2</sup>,
-            </span>
-            <span class="author-block">
-              <a href="https://sites.google.com/it-caesar.de/homepage/">Holger Caesar</a><sup>1</sup>,
-            </span>
-            <span class="author-block">
-              <a href="https://3d.bk.tudelft.nl/liangliang/">Liangliang Nan</a><sup>2</sup>,
-            </span>
-            <span class="author-block">
-              <a href="https://jkooij.github.io/">Julian F.P. Kooij</a><sup>1,2</sup>
-            </span>
+    <section class="section container narrow" id="abstract" aria-labelledby="abstract-title">
+      <p class="section-kicker">The challenge</p>
+      <h2 id="abstract-title">Abstract</h2>
+      <div class="abstract-copy">
+        <p>In autonomous driving, multi-modal perception tasks like 3D object detection typically rely on well-synchronized sensors, both at training and inference. However, despite the use of hardware- or software-based synchronization algorithms, perfect synchrony is rarely guaranteed: Sensors may operate at different frequencies, and real-world factors such as network latency, hardware failures, or processing bottlenecks often introduce time offsets between sensors. Such asynchrony degrades perception performance, especially for dynamic objects.</p>
+        <p>To address this challenge, we propose <strong>AsyncBEV</strong>, a trainable, lightweight, and generic module to improve the robustness of 3D Bird’s Eye View (BEV) object detection models against sensor asynchrony. Inspired by scene flow estimation, AsyncBEV predicts a dense 2D flow field directly from asynchronous multi-modal BEV features taking into account the known time offset between these sensor measurements. The predicted feature flow is then used to warp and spatially align the feature maps, which we show can easily be integrated into different current BEV detector architectures (e.g., BEV grid-based and token-based).</p>
+        <p>Extensive experiments demonstrate AsyncBEV improves robustness against both small and large asynchrony between LiDAR or camera sensors in both the token-based CMT (Yan et al., 2023) and grid-based UniBEV (Wang et al., 2024), especially for dynamic objects. We significantly outperform the ego motion compensated CMT and UniBEV baselines, notably by <strong>16.6% and 11.9% NDS</strong> on dynamic objects in the worst-case scenario of a 0.5s time offset. Code is available at <a href="https://github.com/tudelft-iv/AsyncBEV">https://github.com/tudelft-iv/AsyncBEV</a>.</p>
+      </div>
+      <p class="source-note">Abstract from the <a href="https://proceedings.iclr.cc/paper_files/paper/2026/file/2b31e6fdd87368cb1e838219deb153d3-Paper-Conference.pdf">ICLR 2026 paper</a>. The reported gains are NDS percentage points over ego-motion-compensated baselines on dynamic objects in nuScenes validation at a 0.5 s LiDAR delay. The released implementation in this repository is based on CMT.</p>
+    </section>
+
+    <section class="section section-tint" id="method" aria-labelledby="method-title">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">From time offset to spatial alignment</p>
+          <h2 id="method-title">How AsyncBEV works</h2>
+          <p>Use the known sensor time difference to align features before detection.</p>
+        </div>
+        <ol class="method-steps">
+          <li><span class="step-number" aria-hidden="true">01</span><h3>Observe asynchronously</h3><p>Camera and LiDAR encoders extract features from measurements captured at different timestamps.</p><span class="method-token">Camera + LiDAR + Δt</span></li>
+          <li><span class="step-number" aria-hidden="true">02</span><h3>Predict cross-modal flow</h3><p>A lightweight module predicts dense BEV velocity. The known time offset converts velocity into displacement.</p><span class="method-token">Displacement = velocity × Δt</span></li>
+          <li><span class="step-number" aria-hidden="true">03</span><h3>Align, then detect</h3><p>Combine dynamic correction with ego motion compensation, then align token positions or grid features for detection.</p><span class="method-token">CMT tokens / UniBEV grids</span></li>
+        </ol>
+        <p class="method-note">The paper evaluates both CMT and UniBEV. The public code and the scene comparisons below use CMT.</p>
+      </div>
+    </section>
+
+    <section class="section container" id="scenes" aria-labelledby="scenes-title">
+      <div class="section-heading">
+        <p class="section-kicker">Qualitative results</p>
+        <h2 id="scenes-title">Explore the scene comparisons</h2>
+        <p>Compare CMT and CMT with AsyncBEV on the same scene with asynchronous LiDAR.</p>
+      </div>
+      <div class="scene-browser" id="scene-browser" aria-busy="true">
+        <div class="scene-toolbar">
+          <div class="scene-picker">
+            <label for="scene-selector">Scene</label>
+            <select id="scene-selector" disabled><option>Loading scenes…</option></select>
+            <span id="scene-count" class="scene-count"></span>
           </div>
-
-          <div class="is-size-5 publication-authors">
-            <span class="author-block"><sup>1</sup>Intelligent Vehicles Group,</span>
-            <span class="author-block"><sup>2</sup>3DUU Lab</span>
-          </div>
-          <div class="is-size-5 publication-authors">
-            <span class="author-block">Technical University of Delft</span>
-          </div>
-
-          <div class="column has-text-centered">
-            <div class="publication-links">
-              <!-- PDF Link. -->
-              <span class="link-block">
-                <a href="https://arxiv.org/abs/2601.12994"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fas fa-file-pdf"></i>
-                  </span>
-                  <span>Paper</span>
-                </a>
-              </span>
-              <span class="link-block">
-                <a href="https://arxiv.org/abs/2601.12994"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="ai ai-arxiv"></i>
-                  </span>
-                  <span>arXiv</span>
-                </a>
-              </span>
-              <!-- Video Link. -->
-              <span class="link-block">
-                <a href="https://www.youtube.com/@IntelligentVehiclesatTUDelft"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-youtube"></i>
-                  </span>
-                  <span>Video</span>
-                </a>
-              </span>
-              <!-- Code Link. -->
-              <span class="link-block">
-                <a href="https://github.com/tudelft-iv/AsyncBEV"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-github"></i>
-                  </span>
-                  <span>Code</span>
-                  </a>
-              </span>
-              <!-- Dataset Link. -->
-              <span class="link-block">
-                <a href="https://huggingface.co/datasets/ShimingWang/AsyncBEV"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="far fa-images"></i>
-                  </span>
-                  <span>Data</span>
-                  </a>
-            </div>
-
+          <div class="scene-navigation" aria-label="Scene navigation">
+            <button class="button compact" id="previous-scene" type="button" disabled><span aria-hidden="true">←</span> Previous</button>
+            <button class="button compact" id="next-scene" type="button" disabled>Next <span aria-hidden="true">→</span></button>
           </div>
         </div>
+        <div class="comparison-grid">
+          <figure class="video-card">
+            <figcaption><h3>CMT</h3><span>Baseline</span></figcaption>
+            <video id="cmt-scene-video" controls muted playsinline preload="metadata" aria-label="CMT baseline scene video" aria-describedby="playback-help">Your browser does not support MP4 video.</video>
+            <p class="video-status" id="cmt-video-status">Waiting for scene list</p>
+            <a class="video-download" id="cmt-video-link" hidden>Open CMT video <span aria-hidden="true">↗</span></a>
+          </figure>
+          <figure class="video-card asyncbev-card">
+            <figcaption><h3>CMT + AsyncBEV</h3><span>Cross-modal flow alignment</span></figcaption>
+            <video id="asyncbev-scene-video" controls muted playsinline preload="metadata" aria-label="CMT with AsyncBEV scene video" aria-describedby="playback-help">Your browser does not support MP4 video.</video>
+            <p class="video-status" id="asyncbev-video-status">Waiting for scene list</p>
+            <a class="video-download" id="asyncbev-video-link" hidden>Open AsyncBEV video <span aria-hidden="true">↗</span></a>
+          </figure>
+        </div>
+        <div class="playback-controls" role="group" aria-label="Synchronized playback controls">
+          <button class="button primary compact" id="play-pause" type="button" disabled>Play both</button>
+          <button class="button compact" id="restart-videos" type="button" disabled>Restart</button>
+          <div class="timeline-control"><label class="visually-hidden" for="playback-position">Playback position</label><input id="playback-position" type="range" min="0" max="0" value="0" step="0.01" disabled><output id="playback-time" for="playback-position">0:00 / 0:00</output></div>
+          <div class="speed-control"><label for="playback-speed">Speed</label><select id="playback-speed" disabled><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></div>
+        </div>
+        <div class="comparison-message"><p id="comparison-status" role="status" aria-live="polite">Loading the scene list…</p><button class="text-button" id="retry-scenes" type="button" hidden>Try again</button></div>
       </div>
-    </div>
-  </div>
-</section>
+      <p class="source-note" id="playback-help">Play, pause, seek, or change speed using either video or the shared controls. Playback is linked by elapsed time; changing scenes pauses both videos and returns to the beginning. Only the selected pair is loaded. These are web-optimized display copies; <a href="https://github.com/tudelft-iv/AsyncBEV/blob/gh-pages/static/video/README.md">view video provenance</a>.</p>
+      <noscript><p class="notice">Enable JavaScript to browse synchronized scene comparisons. You can also <a href="https://github.com/tudelft-iv/AsyncBEV/tree/gh-pages/static/video">browse the video files on GitHub</a>.</p></noscript>
+    </section>
 
-<!-- Teaser Video -->
-<!-- <section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <video id="teaser" autoplay muted loop playsinline height="100%">
-        <source src="./static/videos/teaser.mp4"
-                type="video/mp4">
-      </video>
-      <h2 class="subtitle has-text-centered">
-        <span class="dnerf">Nerfies</span> turns selfie videos from your phone into
-        free-viewpoint
-        portraits.
-      </h2>
-    </div>
-  </div>
-</section> -->
-
-<!-- Another set of videos -->
-<!-- <section class="hero is-light is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-steve">
-          <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/steve.mp4"
-                    type="video/mp4">
-          </video>
+    <section class="section section-tint" id="resources" aria-labelledby="resources-title">
+      <div class="container resource-layout">
+        <div class="resource-copy">
+          <p class="section-kicker">Read, reproduce, and build</p>
+          <h2 id="resources-title">Paper &amp; resources</h2>
+          <p>The poster gives a visual overview of the method and paper-reported experiments. Find the CMT implementation and configurations in the repository.</p>
+          <ul class="resource-list">
+            <li><a href="https://proceedings.iclr.cc/paper_files/paper/2026/file/2b31e6fdd87368cb1e838219deb153d3-Paper-Conference.pdf">Read the conference paper <span aria-hidden="true">↗</span></a><span>Method, experiments, and limitations</span></li>
+            <li><a href="https://github.com/tudelft-iv/AsyncBEV">Explore the code <span aria-hidden="true">↗</span></a><span>CMT implementation and configurations</span></li>
+            <li><a href="https://huggingface.co/datasets/ShimingWang/AsyncBEV">Download the data supplement <span aria-hidden="true">↗</span></a><span>Precomputed flow labels and asynchronous sensor indices for nuScenes</span></li>
+          </ul>
         </div>
-        <div class="item item-chair-tp">
-          <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/chair-tp.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-shiba">
-          <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/shiba.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-fullbody">
-          <video poster="" id="fullbody" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/fullbody.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-blueshirt">
-          <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/blueshirt.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-mask">
-          <video poster="" id="mask" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/mask.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-coffee">
-          <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/coffee.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-toby">
-          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/toby2.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
+        <figure class="poster-figure"><a href="./static/images/AsyncBEV_ICLR26_poster_resize.png" aria-label="Open the full ICLR 2026 poster"><img src="./static/images/AsyncBEV_ICLR26_poster_resize.png" width="4072" height="2880" loading="lazy" alt="AsyncBEV ICLR 2026 research poster with the flow alignment architecture and experimental results."></a><figcaption>ICLR 2026 poster · <a href="./static/images/AsyncBEV_ICLR26_poster_resize.png">View full size</a></figcaption></figure>
       </div>
-    </div>
-  </div>
-</section> -->
+    </section>
 
-<section class="section">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-half">
-        <figure>
-          <img src="static/images/motivation.png"
-               alt="AsyncBEV qualitative visualization"
-               style="max-width: 100%; height: auto; border-radius: 8px;">
-          <figcaption class="figure-caption"> 
-            <strong>Figure 1. Multi-modal 3D object detection under sensor asynchrony.</strong> 
-            <p> a) General concept of asynchronous 3D object detection.</p> 
-            <p> b) Pretrained CMT (Yan et al., 2023) under sensor asynchrony, with large translation error.</p> 
-            <p> c) AsyncBEV improves CMT robustness and corrects most spatial misalignment of predicted boxes.</p> 
-          </figcaption>
-        </figure>
-      </div>
-    </div>
-</section>
-
-<section class="section">
-  <div class="container is-max-desktop">
-    <!-- Abstract. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-          In autonomous driving, multi-modal perception tasks like 3D object detection typically rely on well-synchronized sensors, both at training and inference. 
-          However, despite the use of hardware- or software-based synchronization algorithms, perfect synchrony is rarely guaranteed: 
-          Sensors may operate at different frequencies, and real-world factors such as network latency, hardware failures, or processing bottlenecks often introduce time offsets between sensors. 
-          Such asynchrony degrades perception performance, especially for dynamic objects. 
-          </p>
-          <p>
-          To address this challenge, we propose <b>AsyncBEV</b>, a trainable lightweight and generic module to improve the robustness of 3D Birds' Eye View (BEV) object detection models against sensor asynchrony. 
-          Inspired by scene flow estimation, 
-          AsyncBEV first estimates the 2D flow from the BEV features of two different sensor modalities, 
-          taking into account the known time offset between these sensor measurements. 
-          The predicted feature flow is then used to warp and spatially align the feature maps, which we show can easily be integrated into different current BEV detector architectures (e.g., BEV grid-based and token-based). 
-          </p>
-          <p>
-          Extensive experiments demonstrate AsyncBEV improves robustness against both small and large asynchrony between LiDAR or camera sensors in both the token-based CMT and grid-based UniBEV, 
-          especially for dynamic objects. We significantly outperform the ego motion compensated CMT and UniBEV baselines, notably by <b>16.6 %</b> and <b>11.9 %</b> NDS on dynamic objects in the worst-case scenario of a 0.5s time offset.       
-          </p>
-        </div>
-      </div>
-    </div>
-    <!--/ Abstract. -->
-
-
-
-    <!-- Paper video. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Video</h2>
-        <div class="publication-video">
-          <iframe src="https://www.youtube.com/embed/38dQqMKGEEg"
-                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-      </div>
-    </div>
-    <!--/ Paper video. -->
-  </div>
-</section>
-
-
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Scene Comparison</h2>
-        <p class="subtitle is-6">Same scene, different models (<span id="scene-comparison-label">scene-0003</span>)</p>
-        <div class="field is-grouped is-grouped-centered">
-          <div class="control">
-            <div class="select is-small">
-              <select id="scene-selector">
-                <option value="scene-0003" selected>scene-0003</option>
-                <option value="scene-0016">scene-0016</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="columns is-variable is-4">
-
-      <div class="column is-half">
-        <div class="content has-text-centered">
-          <h3 class="title is-5">CMT</h3>
-          <video id="cmt-scene-video"
-                 class="model-sync-video"
-                 data-sync-group="scene-0003"
-                 controls
-                 muted
-                 playsinline
-                 preload="metadata"
-                 width="100%">
-            <source id="cmt-scene-source"
-                    src="./static/video/cmt_async_10/scene-003/LIDAR_TOP_with_GT_vfr.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-      </div>
-      
-      <div class="column is-half">
-        <div class="content has-text-centered">
-          <h3 class="title is-5">AsyncBEV</h3>
-          <video id="asyncbev-scene-video"
-                 class="model-sync-video"
-                 data-sync-group="scene-0003"
-                 controls
-                 muted
-                 playsinline
-                 preload="metadata"
-                 width="100%">
-            <source id="asyncbev-scene-source"
-                    src="./static/video/asyncbev_async_10/scene-0003/LIDAR_TOP_with_GT_vfr.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-      </div>
-
-      
-    </div>
-  </div>
-</section>
-
-
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code>@inproceedings{wang2026asyncbev,
-  author    = {Wang, Shiming and Caesar, Holger and Nan, Liangliang and Kooij, Julian FP},
-  title     = {AsyncBEV: Cross-modal Flow Alignment in Asynchronous 3D Object Detection},
-  booktitle = {ICLR},
+    <section class="section container narrow" id="citation" aria-labelledby="citation-title">
+      <div class="citation-heading"><h2 id="citation-title">Citation</h2><button class="button compact" type="button" id="copy-citation">Copy BibTeX</button></div>
+      <pre><code id="citation-text">@inproceedings{wang2026asyncbev,
+  title     = {AsyncBEV: Cross-Modal Flow Alignment in Asynchronous 3D Object Detection},
+  author    = {Wang, Shiming and Caesar, Holger and Nan, Liangliang and Kooij, Julian F. P.},
+  booktitle = {The Fourteenth International Conference on Learning Representations},
   year      = {2026},
+  url       = {https://arxiv.org/abs/2601.12994}
 }</code></pre>
-  </div>
-</section>
+      <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
 
-
-<footer class="footer">
-  <div class="container">
-    <div class="content has-text-centered">
-      <a class="icon-link"
-         href="https://arxiv.org/abs/2601.12994">
-        <i class="fas fa-file-pdf"></i>
-      </a>
-      <a class="icon-link" href="https://github.com/tudelft-iv/AsyncBEV" class="external-link" disabled>
-        <i class="fab fa-github"></i>
-      </a>
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <p><strong>AsyncBEV</strong> · Delft University of Technology</p>
+      <p>More research: <a href="https://intelligent-vehicles.org/">Intelligent Vehicles</a> · <a href="https://github.com/tudelft-iv/UniBEV">UniBEV</a> · <a href="https://github.com/tudelft-iv/VoteFlow">VoteFlow</a></p>
+      <p class="template-credit">Website adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, under the <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 License</a>.</p>
     </div>
-    <div class="columns is-centered">
-      <div class="column is-8">
-          <div class="content">
-            <p>
-              <script type="text/javascript" src="https://www.free-counters.org/count/fpyo"></script><br>
-              This website template is borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>
-              under the <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-                Commons Attribution-ShareAlike 4.0 International License</a>.
-            </p>
-          </div>
-        </div>
-    </div>
-  </div>
-</footer>
-
+  </footer>
 </body>
 </html>
