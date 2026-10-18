@@ -4,9 +4,9 @@ This guide applies to the static project website on `gh-pages`. Read [README.md]
 
 ## Source map
 
-- `index.html` contains the research content and accessible scene-browser controls. Preserve the authors, verified paper claims and template attribution.
+- `index.html` contains the research content, native More Research dropdown, and accessible scene-browser controls. Preserve the original UniBEV/VoteFlow links, authors, verified paper claims and template attribution. Keep `{AsyncBEV}` protected in both BibTeX title fields (`index.html` and `README.md`).
 - `static/css/index.css` contains page styles; maintain desktop and mobile readability.
-- `static/js/index.js` loads `static/video/scenes.json`, selects a pair and coordinates video playback. Avoid preloading every scene.
+- `static/js/index.js` loads `static/video/scenes.json`, selects a pair and coordinates video playback. It also closes the native research dropdown on Escape, outside pointer activation, or focus moving away. Avoid preloading every scene.
 - `tests/scene-browser.test.cjs` exercises manifest and playback state with mocked DOM/media using Node built-ins.
 - `static/images/` contains the motivation figure, institution icon and original ICLR poster.
 - `static/video/` contains 150 paired scenes, the scene manifest and media provenance/checksums. Read its [guide](static/video/README.md).
@@ -21,6 +21,6 @@ The website MP4s are compressed derivatives. Preserve original source videos sep
 
 ## Validation
 
-Serve the site over HTTP, verify every listed video exists, and test initial load, previous/next/direct selection, play/pause, seeking, rate changes, replay, failure/retry and mobile overflow. Verify the browser only requests selected videos and has no missing interpolation assets or JavaScript exceptions. Run `node --check static/js/index.js`, `node tests/scene-browser.test.cjs`, the SHA-256 check documented in README, and `git diff --check`.
+Serve the site over HTTP, verify every listed video exists, and test initial load, previous/next/direct selection, play/pause, seeking, rate changes, replay, failure/retry and mobile overflow. Check the research dropdown with keyboard and touch, including Escape and outside dismissal; its links must remain usable without JavaScript. Verify the browser only requests selected videos and has no missing interpolation assets or JavaScript exceptions. Run `node --check static/js/index.js`, `node tests/scene-browser.test.cjs`, the SHA-256 check documented in README, and `git diff --check`.
 
 Keep this guide and README current with changes to files, data conventions or validation. Preserve Git exclusions for private `AGENTS.md` and `.codex/`.

@@ -31,7 +31,7 @@ See [video provenance](static/video/README.md) before replacing or adding media.
 ```bibtex
 @inproceedings{wang2026asyncbev,
   author    = {Wang, Shiming and Caesar, Holger and Nan, Liangliang and Kooij, Julian F. P.},
-  title     = {AsyncBEV: Cross-modal Flow Alignment in Asynchronous 3D Object Detection},
+  title     = {{AsyncBEV}: Cross-modal Flow Alignment in Asynchronous 3D Object Detection},
   booktitle = {International Conference on Learning Representations},
   year      = {2026},
   url       = {https://arxiv.org/abs/2601.12994}

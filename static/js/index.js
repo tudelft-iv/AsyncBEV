@@ -323,7 +323,27 @@ function setupCitationCopy() {
   });
 }
 
+function setupResearchDropdown() {
+  const dropdown = document.getElementById('research-dropdown');
+  if (!dropdown) return;
+  const summary = dropdown.querySelector('summary');
+  dropdown.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && dropdown.open) {
+      dropdown.open = false;
+      summary.focus();
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  });
+  function closeWhenOutside(event) {
+    if (dropdown.open && !dropdown.contains(event.target)) dropdown.open = false;
+  }
+  document.addEventListener('pointerdown', closeWhenOutside);
+  document.addEventListener('focusin', closeWhenOutside);
+}
+
 if (typeof document !== 'undefined') {
+  setupResearchDropdown();
   setupSceneBrowser();
   setupCitationCopy();
 }

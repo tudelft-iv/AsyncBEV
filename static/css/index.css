@@ -47,6 +47,15 @@ h3 { margin: 0 0 .75rem; font-size: 1.2rem; font-weight: 650; }
 .nav-links { display: flex; align-items: center; gap: 1.75rem; font-size: .87rem; }
 .nav-links a { color: var(--muted); }
 .nav-links a:hover { color: var(--accent); }
+.research-dropdown { position: relative; }
+.research-dropdown summary { display: flex; align-items: center; gap: .45rem; padding-block: .55rem; color: var(--muted); cursor: pointer; list-style: none; white-space: nowrap; }
+.research-dropdown summary::-webkit-details-marker { display: none; }
+.research-dropdown summary::after { content: ""; width: .4rem; height: .4rem; margin-top: -.2rem; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); }
+.research-dropdown[open] summary::after { margin-top: .2rem; transform: rotate(225deg); }
+.research-dropdown summary:hover, .research-dropdown[open] summary { color: var(--accent); }
+.research-dropdown-links { position: absolute; z-index: 5; top: 100%; right: 0; min-width: 160px; padding: .35rem; border: 1px solid var(--line); border-radius: 6px; background: var(--white); box-shadow: 0 6px 20px #18384a14; }
+.research-dropdown-links a { display: block; padding: .6rem .8rem; border-radius: 3px; white-space: nowrap; }
+.research-dropdown-links a:hover { background: var(--wash); text-decoration: none; }
 .hero { padding-top: 4rem; padding-bottom: 2.8rem; text-align: center; }
 .hero .eyebrow { display: inline-block; border: 1px solid #cce5ed; border-radius: 30px; padding: .22rem .8rem; background: #f4fbfd; }
 h1 { margin: .65rem auto 1.7rem; max-width: 1000px; }
@@ -135,8 +144,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 @media (max-width: 600px) {
   html { scroll-padding-top: 1rem; }
   .container { width: calc(100% - 2rem); }
-  .site-nav { min-height: 76px; flex-direction: column; justify-content: center; gap: .35rem; }
-  .nav-links { font-size: .8rem; gap: 1.4rem; }
+  .site-nav { min-height: 76px; flex-direction: column; justify-content: center; gap: .35rem; padding-block: .65rem; }
+  .nav-links { justify-content: center; flex-wrap: wrap; font-size: .78rem; column-gap: 1rem; row-gap: 0; }
   .hero { padding-top: 2.3rem; }
   .desktop-break { display: none; }
   .authors { font-size: .9rem; column-gap: .4rem; }
