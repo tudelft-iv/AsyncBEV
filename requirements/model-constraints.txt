@@ -1,0 +1,7 @@
+# Compatibility constraints for the Python 3.8 / MMCV 1.x model environment.
+# This is not a complete dependency lock or the standalone CPU flow environment.
+# Legacy sampling code uses np.int, np.bool and np.long.
+numpy<1.24
+# MMCV 1.6.0 Config.pretty_text calls FormatCode(..., verify=True).
+# YAPF 0.40.2 removed the verify argument.
+yapf==0.40.1

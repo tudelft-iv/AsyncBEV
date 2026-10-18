@@ -107,7 +107,7 @@ class CustomNuScenesDataset(NuScenesDataset):
                  metric='bbox',
                  logger=None,
                  jsonfile_prefix=None,
-                 result_names=['pts_bbox'],
+                 result_names=('pts_bbox',),
                  show=False,
                  out_dir=None,
                  pipeline=None):
@@ -129,7 +129,8 @@ class CustomNuScenesDataset(NuScenesDataset):
                 Default: None.
 
         Returns:
-            dict[str, float]: Results of each evaluation metric.
+            dict[str, dict[str, float]]: Metrics grouped by object subset
+                (all, dynamic, static), then by result head and metric.
         """
         result_files, tmp_dir = self.format_results(results, jsonfile_prefix)
 
@@ -137,10 +138,14 @@ class CustomNuScenesDataset(NuScenesDataset):
             results_dict = dict()
             for name in result_names:
                 print('Evaluating bboxes of {}'.format(name))
-                ret_dict = self._evaluate_dynamic_single(result_files[name])
-            results_dict.update(ret_dict)
+                ret_dict = self._evaluate_dynamic_single(
+                    result_files[name], logger=logger, metric=metric,
+                    result_name=name)
+                for subset, metrics in ret_dict.items():
+                    results_dict.setdefault(subset, {}).update(metrics)
         elif isinstance(result_files, str):
-            results_dict = self._evaluate_dynamic_single(result_files)
+            results_dict = self._evaluate_dynamic_single(
+                result_files, logger=logger, metric=metric)
 
         if tmp_dir is not None:
             tmp_dir.cleanup()

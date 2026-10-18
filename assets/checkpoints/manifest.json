@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "prepared_date": "2026-10-18",
+  "code_repository": "https://github.com/tudelft-iv/AsyncBEV",
+  "data_supplement_revision": "b31cfeec498070875c4dfdd531e6aa167d5b229e",
+  "tensor_loading_tested": false,
+  "total_size_bytes": 1249960955,
+  "files": [
+    {
+      "path": "cmt_asyncbev_lidar_epoch12.pth",
+      "size_bytes": 440052953,
+      "sha256": "324986141a3628c5c7c38209da186dd9dbed49847a29d2c043bf145e2d142bfd",
+      "method": "CMT + AsyncBEV",
+      "delayed_modality": "lidar",
+      "checkpoint_epoch": 12,
+      "original_basename": "epoch_12.pth",
+      "training_config": "projects/CMT/configs/fusion/cmt_asyncbev_lidar.py",
+      "inference_configs": [
+        "projects/CMT/configs/inference/cmt_asyncbev_lidar_0.py",
+        "projects/CMT/configs/inference/cmt_asyncbev_lidar_5.py",
+        "projects/CMT/configs/inference/cmt_asyncbev_lidar_10.py"
+      ],
+      "paper_tables": [
+        "Table 1",
+        "Table IV"
+      ],
+      "training_settings": {
+        "scheduled_epochs": 12,
+        "samples_per_gpu": 4,
+        "learning_rate": 2e-05
+      },
+      "historical_metrics": {
+        "dataset": "nuScenes",
+        "split": "val",
+        "delay_label_seconds": 0.5,
+        "subset": "all",
+        "units": "percent",
+        "evaluator": "evaluate_dynamic",
+        "NDS": 69.98592664,
+        "mAP": 66.39767717
+      },
+      "notes": [
+        "Copied without modifying checkpoint bytes.",
+        "Historical metrics, not a fresh evaluation.",
+        "Current inference requires the prepared flow supplement."
+      ],
+      "share_url": "https://surfdrive.surf.nl/s/3zPR66WtM3QJQbS",
+      "download_url": "https://surfdrive.surf.nl/public.php/dav/files/3zPR66WtM3QJQbS/?accept=zip"
+    },
+    {
+      "path": "cmt_asyncbev_lidar_fd_epoch10.pth",
+      "size_bytes": 369855753,
+      "sha256": "75b686bfc2af36391cc556e25f8c1354769b638c7953a071d18f16e1a622df29",
+      "method": "CMT + AsyncBEV (FD)",
+      "delayed_modality": "lidar",
+      "checkpoint_epoch": 10,
+      "original_basename": "epoch_10.pth",
+      "training_config": "projects/CMT/configs/fusion/cmt_asyncbev_lidar_fd.py",
+      "inference_configs": [
+        "projects/CMT/configs/inference/cmt_asyncbev_lidar_0.py",
+        "projects/CMT/configs/inference/cmt_asyncbev_lidar_5.py",
+        "projects/CMT/configs/inference/cmt_asyncbev_lidar_10.py"
+      ],
+      "paper_tables": [
+        "Table 1"
+      ],
+      "training_settings": {
+        "scheduled_epochs": 12,
+        "samples_per_gpu": 4,
+        "learning_rate": 2e-05
+      },
+      "historical_metrics": {
+        "dataset": "nuScenes",
+        "split": "val",
+        "delay_label_seconds": 0.5,
+        "subset": "all",
+        "units": "percent",
+        "evaluator": "evaluate_dynamic",
+        "NDS": 68.70437972,
+        "mAP": 64.39546754
+      },
+      "notes": [
+        "Copied without modifying checkpoint bytes.",
+        "Historical metrics, not a fresh evaluation.",
+        "Current inference requires the prepared flow supplement.",
+        "Confirmed FD evaluation family. Three printed paper cells differ from direct rounding of saved metrics; see the code repository projects/CMT/configs/README.md checkpoint correspondence section."
+      ],
+      "share_url": "https://surfdrive.surf.nl/s/eQp4TBxJJCcMtDi",
+      "download_url": "https://surfdrive.surf.nl/public.php/dav/files/eQp4TBxJJCcMtDi/?accept=zip"
+    },
+    {
+      "path": "cmt_asyncbev_camera_epoch12.pth",
+      "size_bytes": 440052249,
+      "sha256": "93602a0e5bd1ddde88b98ace6dff33b1b563d5e89975d6e284b48d1f19fe9abd",
+      "method": "CMT + AsyncBEV",
+      "delayed_modality": "camera",
+      "checkpoint_epoch": 12,
+      "original_basename": "epoch_12.pth",
+      "training_config": "projects/CMT/configs/fusion/cmt_asyncbev_camera.py",
+      "inference_configs": [
+        "projects/CMT/configs/inference/cmt_asyncbev_camera_0.py",
+        "projects/CMT/configs/inference/cmt_asyncbev_camera_3.py",
+        "projects/CMT/configs/inference/cmt_asyncbev_camera_7.py"
+      ],
+      "paper_tables": [
+        "Table III"
+      ],
+      "training_settings": {
+        "scheduled_epochs": 12,
+        "samples_per_gpu": 4,
+        "learning_rate": 2e-05
+      },
+      "historical_metrics": {
+        "dataset": "nuScenes",
+        "split": "val",
+        "delay_label_seconds": 0.5,
+        "subset": "all",
+        "units": "percent",
+        "evaluator": "evaluate_dynamic",
+        "NDS": 72.27977001,
+        "mAP": 69.05471625
+      },
+      "notes": [
+        "Copied without modifying checkpoint bytes.",
+        "Historical metrics, not a fresh evaluation.",
+        "Current inference requires the prepared flow supplement."
+      ],
+      "share_url": "https://surfdrive.surf.nl/s/EG345qZxJmq47jc",
+      "download_url": "https://surfdrive.surf.nl/public.php/dav/files/EG345qZxJmq47jc/?accept=zip"
+    }
+  ],
+  "distribution": {
+    "service": "SURFdrive",
+    "folder": "Shared/AsyncBEV (ICLR'26)",
+    "access": "Public read-only file shares; no login, password, or link expiration.",
+    "published_date": "2026-10-18"
+  },
+  "huggingface_checkpoint_release": "not_published"
+}

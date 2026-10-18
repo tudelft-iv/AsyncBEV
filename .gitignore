@@ -1,0 +1,18 @@
+# Local Codex discussion memory, progress, and working records.
+.codex/
+/AGENTS.md
+
+# Public agent guidance is intended for version control.
+!/AGENTS_public.md
+
+# Generated Python files and local training/evaluation assets.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+/outputs/
+/work_dirs/
+/data/
+/checkpoints/
+/wandb/
+/mmdetection3d/
+/.upstream/

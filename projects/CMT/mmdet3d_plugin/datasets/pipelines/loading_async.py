@@ -256,6 +256,10 @@ class LoadAsyncPointsFromMultiSweeps(LoadPointsFromMultiSweeps):
         test_mode (bool): If test_model=True used for testing, it will not
             randomly sample sweeps but select the nearest N frames.
             Defaults to False.
+        sensor_staleness_feats (bool): Express point time offsets relative to
+            the synchronized sample, without changing point coordinates.
+            Defaults to False. Early motion compensation also uses this time
+            reference; enabling both applies the offset only once.
     """
     def __init__(self,
                  sweeps_num=10,
@@ -265,7 +269,8 @@ class LoadAsyncPointsFromMultiSweeps(LoadPointsFromMultiSweeps):
                  pad_empty_sweeps=False,
                  remove_close=False,
                  early_motion_compensation = False,
-                 test_mode=False):
+                 test_mode=False,
+                 sensor_staleness_feats=False):
         super().__init__(
             sweeps_num=sweeps_num,
             load_dim=load_dim,
@@ -275,6 +280,7 @@ class LoadAsyncPointsFromMultiSweeps(LoadPointsFromMultiSweeps):
             remove_close=remove_close,
             test_mode=test_mode)
         self.early_motion_compensation = early_motion_compensation
+        self.sensor_staleness_feats = sensor_staleness_feats
 
     def __call__(self, results):
         """Call function to load points data from file.
@@ -330,6 +336,9 @@ class LoadAsyncPointsFromMultiSweeps(LoadPointsFromMultiSweeps):
         ## transfomr points from the async frame to the key frame (sample frame)
             points.tensor[:, :3] = points.tensor[:,:3] @ results['async_metas']['sensor2lidar_rotation'].T
             points.tensor[:, :3] += results['async_metas']['sensor2lidar_translation']
+
+        if self.early_motion_compensation or self.sensor_staleness_feats:
+            # Convert async-relative ages to synchronized-sample-relative ages.
             points.tensor[:, 4] += ts0 - ts
 
         points = points[:, self.use_dim]
@@ -345,6 +354,8 @@ class LoadAsyncPointsFromMultiSweeps(LoadPointsFromMultiSweeps):
         repr_str += f"use_dim={self.use_dim}, "
         repr_str += f"pad_empty_sweeps={self.pad_empty_sweeps}, "
         repr_str += f"remove_close={self.remove_close}, "
+        repr_str += f"early_motion_compensation={self.early_motion_compensation}, "
+        repr_str += f"sensor_staleness_feats={self.sensor_staleness_feats}, "
         repr_str += f"test_mode={self.test_mode})"
         return repr_str
 

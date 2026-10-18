@@ -4,9 +4,10 @@ import torch
 import numpy as np
 
 from nuscenes.utils.geometry_utils import transform_matrix, points_in_box
-from nuscenes.utils.data_classes import Box
 
 from pyquaternion import Quaternion
+
+from projects.CMT.flow_geometry import boxes2sensor, calculate_nusc_sceneflow
 
 
 def check_info(idx, source_frame, source_data, target_data, key, nusc, data_root):
@@ -107,136 +108,3 @@ def generate_voxel_flow(
     gt_flow_sync2async = calculate_nusc_sceneflow(sync_data, async_data, pts_in_boxes_np, nusc)
 
     return gt_flow_sync2async
-
-def calculate_nusc_sceneflow(source_data,
-                             target_data,
-                             source_pc,
-                             nusc):
-    assert source_pc.shape[1] == 3, 'source_pc should be [N, 3]'
-    src_data_pc = source_pc.T  # [N, 3]
-
-    src_boxes = nusc.get_boxes(source_data['token'])
-    tar_boxes = nusc.get_boxes(target_data['token'])
-
-    ## get pose and calibaration of source data
-    pose_record_src = nusc.get('ego_pose', source_data['ego_pose_token'])
-    src_ego2global_translation = pose_record_src['translation']
-    src_ego2global_rotation = Quaternion(pose_record_src['rotation'])
-    T_src_e2g = transform_matrix(src_ego2global_translation, src_ego2global_rotation)
-
-    cs_record_src = nusc.get('calibrated_sensor', source_data['calibrated_sensor_token'])
-    src_lidar2ego_translation = cs_record_src['translation']
-    src_lidar2ego_rotation = Quaternion(cs_record_src['rotation'])
-    assert cs_record_src['camera_intrinsic'] == []
-    T_src_l2e = transform_matrix(src_lidar2ego_translation, src_lidar2ego_rotation)
-    
-    ## get pose and calibaration of target data
-    pose_record_tar = nusc.get('ego_pose', target_data['ego_pose_token'])
-    tar_ego2global_translation = pose_record_tar['translation']
-    tar_ego2global_rotation = Quaternion(pose_record_tar['rotation'])
-    T_tar_e2g = transform_matrix(tar_ego2global_translation, tar_ego2global_rotation)
-
-    cs_record_tar = nusc.get('calibrated_sensor', target_data['calibrated_sensor_token'])
-    if cs_record_tar['camera_intrinsic'] == []: ## lidar data
-        tar_lidar2ego_translation = cs_record_tar['translation']
-        tar_lidar2ego_rotation = Quaternion(cs_record_tar['rotation'])
-        T_tar_l2e = transform_matrix(tar_lidar2ego_translation, tar_lidar2ego_rotation)
-    else: ## camera data
-        T_tar_l2e = T_src_l2e  # use the source lidar to ego transformation for the target data
-    # tar_lidar2ego_translation = cs_record_tar['translation']
-    # tar_lidar2ego_rotation = Quaternion(cs_record_tar['rotation'])
-    # T_tar_l2e = transform_matrix(tar_lidar2ego_translation, tar_lidar2ego_rotation)
-
-    gt_flow_s2t = np.zeros((src_data_pc.shape[1], 3))
-    T_sl2tl = np.linalg.inv(T_tar_l2e) @ np.linalg.inv(T_tar_e2g) @ T_src_e2g @ T_src_l2e
-
-    src_data_pc_homo = np.ones((src_data_pc.shape[1], 4, 1))
-    src_data_pc_homo[:, :3, 0] = src_data_pc.T[:, :3]
-    target_data_pc_homo = T_sl2tl @ src_data_pc_homo
-    pose_flow_s2t = target_data_pc_homo[:, :3, 0] - src_data_pc_homo[:, :3, 0]
-
-    src_ann_instance_map = dict()
-    for box in src_boxes:
-        sample_annotation = nusc.get('sample_annotation', box.token)
-        instance_token = sample_annotation['instance_token']
-        src_ann_instance_map[box.token] = instance_token
-
-    tar_instance_ann_map = dict()
-    tar_instance_tokens_list = []
-    for box in tar_boxes:
-        sample_annotation = nusc.get('sample_annotation', box.token)
-        instance_token = sample_annotation['instance_token']
-        tar_instance_tokens_list.append(instance_token)
-        tar_instance_ann_map[instance_token] = box.token
-
-    for src_box in src_boxes:
-        src_box_token = src_box.token
-        src_box_translation = src_box.center
-        src_box_rotation = src_box.orientation
-        src_box_size = src_box.wlh
-
-        src_box_instance_token = src_ann_instance_map[src_box_token]
-
-        T_src_box2g = transform_matrix(src_box_translation, src_box_rotation)
-
-        if src_box_instance_token in tar_instance_tokens_list:
-            tar_box = tar_boxes[tar_instance_tokens_list.index(src_box_instance_token)]
-
-            tar_box_translation = tar_box.center
-            tar_box_rotation = tar_box.orientation
-
-            T_tar_box2g = transform_matrix(tar_box_translation, tar_box_rotation)
-
-            ## transform all boxes to the source lidar frame
-            T_tar_box2sl = np.linalg.inv(T_src_l2e) @ np.linalg.inv(T_src_e2g) @ T_tar_box2g
-            T_src_box2sl = np.linalg.inv(T_src_l2e) @ np.linalg.inv(T_src_e2g) @ T_src_box2g
-
-            ## get transformation from from source box to target box first
-            R_s2t = T_tar_box2sl @ np.linalg.inv(T_src_box2sl)
-
-            ## get points of source lidar in the source box
-            src_box2sl_translation = T_src_box2sl[:3, 3]
-            src_box2sl_rotation = Quaternion(matrix=T_src_box2sl[:3, :3])
-            src_box2sl = Box(src_box2sl_translation, src_box_size, src_box2sl_rotation)
-
-            mask = points_in_box(src_box2sl, src_data_pc[:3, :])
-
-            pts_src_box2sl = src_data_pc[:, mask]  # [4, n]
-
-            pts_src_box2sl_homo = np.ones((pts_src_box2sl.shape[1], 4, 1))
-            pts_src_box2sl_homo[:, :3, 0] = pts_src_box2sl.T[:, :3]
-
-            pts_tar_box2sl_homo = R_s2t @ pts_src_box2sl_homo  # [N, 4, 1]
-
-            box_flow_s2t = pts_tar_box2sl_homo[:, :3, 0] - pts_src_box2sl_homo[:, :3, 0]
-
-            gt_flow_s2t[mask, :] = box_flow_s2t
-    return gt_flow_s2t, pose_flow_s2t
-
-
-def boxes2sensor(boxes, ego_pose_record, calibration_record):
-    boxes_out = []
-
-    for box in boxes:
-        box2global_translation = box.center
-        box2global_rotation = box.orientation
-        T_box2g = transform_matrix(box2global_translation, box2global_rotation)
-
-        ego2global_translation = ego_pose_record['translation']
-        ego2global_rotation = Quaternion(ego_pose_record['rotation'])
-        T_e2g = transform_matrix(ego2global_translation, ego2global_rotation)
-
-        lidar2ego_translation = calibration_record['translation']
-        lidar2ego_rotation = Quaternion(calibration_record['rotation'])
-        T_l2e = transform_matrix(lidar2ego_translation, lidar2ego_rotation)
-
-        T_box2l = np.linalg.inv(T_l2e) @ np.linalg.inv(T_e2g) @ T_box2g
-
-        box2lidar_translation = T_box2l[:3, 3]
-        box2lidar_rotation = Quaternion(matrix=T_box2l[:3, :3])
-
-        box_out = Box(box2lidar_translation, box.wlh, box2lidar_rotation)
-
-        boxes_out.append(box_out)
-
-    return boxes_out
